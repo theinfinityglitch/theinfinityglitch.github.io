@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="{% current_lang %}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="The Infinity Glitch">
+
+    {% if page.title[current_lang] or page.title %}
+    {% if page.title[current_lang] %}
+    <meta property="og:title" content="{{ page.title[current_lang] | remove: " - The Infinity Glitch" }}{% if
+        page.notitlesuffix !=true %} – The Infinity Glitch{% endif %}">
+    <title>{{ page.title[current_lang] | remove: " - The Infinity Glitch" }}{% if page.notitlesuffix != true %} – The
+        Infinity Glitch{% endif %}</title>
+    {% else %}
+    <meta property="og:title" content="{{ page.title | remove: " - The Infinity Glitch" }}{% if page.notitlesuffix
+        !=true %} – The Infinity Glitch{% endif %}">
+    <title>{{ page.title | remove: " - The Infinity Glitch" }}{% if page.notitlesuffix != true %} – The Infinity
+        Glitch{% endif %}</title>
+    {% endif %}
+    {% else %}
+    <meta property="og:title" content="The Infinity Glitch">
+    <title>The Infinity Glitch</title>
+    {% endif %}
+
+    <link rel="alternate" type="application/rss+xml" title="The Infinity Glitch News" href="/rss.xml">
+    <link rel="alternate" type="application/json" title="The Infinity Glitch News" href="/rss.json" />
+    <link rel="alternate" type="application/atom+xml" title="The Infinity Glitch News" href="/atom.xml" />
+    <link rel="stylesheet" href="/assets/css/header.css?3">
+</head>
+
+<body>
+    {{ content }}
+</body>
+
+</html>
