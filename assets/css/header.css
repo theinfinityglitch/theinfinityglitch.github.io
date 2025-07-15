@@ -3,10 +3,10 @@ header {
     z-index: 2;
 
     height: 64px;
-    background-color: darkslategray;
+    background-color: black;
     display: flex;
     align-items: center;
-    box-shadow: black;
+    box-shadow: slategray;
 
     .container {
         overflow: initial;
@@ -50,4 +50,292 @@ header .banner-container .banner a {
     font-weight: 600;
     color: black;
     text-decoration-color: black;
+}
+
+#nav_toggle_cb {
+    display: none;
+}
+
+#nav_toggle_btn {
+    line-height: 0px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 100%;
+
+    @media (min-width: 1200px) {
+        display: none;
+    }
+}
+
+.mobile-language-selector {
+    display: none;
+}
+
+.mobile-links {
+    display: grid;
+    grid-template-columns: 1fr 49px;
+    align-items: center;
+
+    @media (min-width: 1200px) {
+        display: none;
+    }
+}
+
+#nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 26px;
+
+    a {
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 400;
+        color: green;
+        padding: 1.3175rem 1rem;
+        margin-left: 14px;
+    }
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding-left: 0;
+
+    }
+
+    a:hover,
+    #title-link:hover {
+        background-color: hsla(0, 0%, 50%, 0.1);
+    }
+}
+
+#nav>ul {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+#nav>ul> :first-child {
+    padding-left: 0;
+}
+
+#nav>ul> :last-child {
+    padding-right: 0;
+}
+
+#nav>ul li {
+    padding-left: 1rem;
+    margin-bottom: 0;
+    margin-left: -1rem;
+    margin-right: -1rem;
+}
+
+#nav li.active>a {
+    color: green;
+}
+
+#nav>ul ul {
+    display: none;
+}
+
+#nav_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Dropdown menu */
+.nav-dropdown-menu {
+    position: fixed;
+    background-color: rgba(134, 144, 154, 0.15);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
+.nav-dropdown-menu a {
+    display: block;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    color: green;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.nav-dropdown-menu a:hover {
+    background-color: hsla(0, 0%, 50%, 0.1);
+}
+
+/* Hide touch-only items on desktop (non-touch devices) */
+@media (hover: hover) and (pointer: fine) {
+    .nav-dropdown-menu a.touch-only {
+        display: none;
+    }
+}
+
+/* Hide focus outline on dropdown triggers when dropdown is open */
+[data-dropdown]:focus {
+    outline: none;
+}
+
+/* But restore focus outline when dropdown is closed (for keyboard navigation) */
+[data-dropdown]:focus:not(.dropdown-open) {
+    outline: 0.125rem solid hsl(220, 100%, 62.5%);
+    outline-color: currentcolor;
+    position: relative;
+}
+
+/* Hide mobile-only items on desktop */
+@media (min-width: 1200px) {
+    .mobile-only {
+        display: none;
+    }
+}
+
+/* Mobile style */
+@media (max-width: 1200px) {
+    .hide-on-mobile {
+        display: none;
+    }
+
+    header {
+        height: auto;
+    }
+
+    header>div {
+        flex-direction: column;
+    }
+
+    #title-link {
+        margin: 0;
+    }
+
+    #nav_head {
+        width: 100%;
+        margin-top: 0.25rem;
+    }
+
+    #nav_toggle_btn {
+        display: block;
+        /* Make the navbar toggle button easier to click. */
+        padding: 1.25rem;
+        margin-top: -0.2rem;
+        margin-right: -1rem;
+    }
+
+    #nav_toggle_btn:hover {
+        background-color: hsla(0, 0%, 50%, 0.15);
+    }
+
+    #nav_toggle_btn:active {
+        background-color: hsla(0, 0%, 50%, 0.25);
+    }
+
+    #nav_toggle_cb:checked~header nav {
+        display: block;
+    }
+
+    #nav {
+        display: none;
+        padding-left: 0;
+    }
+
+    #nav ul {
+        align-items: flex-start;
+        flex-direction: column;
+        height: auto;
+    }
+
+    #nav>ul {
+        margin-bottom: 16px;
+    }
+
+    #nav ul li {
+        padding: 0;
+        padding-top: 16px;
+        width: 100%;
+    }
+
+    #nav ul a {
+        width: 100%;
+        display: block;
+        /* Make links easier to click but still close to each other. */
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        margin-top: -0.4375rem;
+        margin-bottom: -0.4375rem;
+    }
+
+}
+
+/* Language selector */
+.language-selector {
+    background-image: none;
+}
+
+.language-option {
+    @media (max-width: 1200px) {
+        margin-left: 30px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    #nav_toggle_btn {
+        filter: invert(100%)saturate(0%)brightness(120%);
+    }
+}
+
+/* Language selector */
+@media (min-width: 1200px) {
+    #nav {
+        .language-selector {
+            width: 66px;
+            height: 43px;
+            display: block;
+            text-align: center;
+            background-image: url(/assets/icons/translate_light.svg);
+            background-repeat: no-repeat;
+            background-position: 28px 6px;
+            background-size: 42px;
+            opacity: 0.8;
+            margin-left: -10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .language-dropdown {
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            border-radius: 5px;
+            background: #303030;
+            border: 1px solid #ffffff3b;
+            position: relative;
+            top: 50px;
+            width: 120px;
+            left: -65px;
+            display: none;
+
+            a {
+                padding: 5px 10px;
+                margin: 0;
+                display: block;
+            }
+        }
+
+        .language-selector.open .language-dropdown {
+            display: block;
+        }
+
+        .language-option {
+            user-select: none;
+        }
+    }
 }
