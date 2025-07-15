@@ -1,11 +1,31 @@
-<input type="checkbox" id="nav_toggle_cb">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="The Infinity Glitch">
+
+    
+    <meta property="og:title" content="The Infinity Glitch">
+    <title>The Infinity Glitch</title>
+    
+
+    <link rel="alternate" type="application/rss+xml" title="The Infinity Glitch News" href="/rss.xml">
+    <link rel="alternate" type="application/json" title="The Infinity Glitch News" href="/rss.json" />
+    <link rel="alternate" type="application/atom+xml" title="The Infinity Glitch News" href="/atom.xml" />
+    <link rel="stylesheet" href="/assets/css/header.css?3">
+</head>
+
+<body>
+    <input type="checkbox" id="nav_toggle_cb">
 <header class="flex colum">
     <div class="container flex align-center">
         <div id="nav_head">
             <a href="/" id="title-link">
-                <h1 class="title">The Infinity Glitch</h1>
+                <h1 class="nav-title">The Infinity Glitch</h1>
             </a>
-            <div class="mobile links">
+            <div class="mobile-links">
                 <label for="nav_toggle_cb" id="nav_toggle_btn">
                     <img src="/assets/icons/hamburger.svg" width="24" height="24" alt="Main menu">
                 </label>
@@ -18,8 +38,269 @@
                 <li><a href="/projects/">Projects</a></li>
                 <li><a href="/about/">About</a></li>
             </ul>
+
+            <ul class="right">
+                
+                <li class="language-selector" onclick="this.classList.toggle('open')">
+                    <a class="mobile-language-selector" href="#">Language: </a>
+                    <div class="language-dropdown">
+                        
+                        <div class="language-option"><a href="#"
+                                data-lang-path="/"
+                                data-lang="en" onclick="onSetLanguagePreference(event, this)"><span
+                                    class="localize-language-label">en</span></a></div>
+                        
+                        <div class="language-option"><a href="#"
+                                data-lang-path="/fr/"
+                                data-lang="fr" onclick="onSetLanguagePreference(event, this)"><span
+                                    class="localize-language-label">fr</span></a></div>
+                        
+                        <div class="language-option"><a href="#"
+                                data-lang-path="/pt-br/"
+                                data-lang="pt-br" onclick="onSetLanguagePreference(event, this)"><span
+                                    class="localize-language-label">pt-br</span></a></div>
+                        
+                    </div>
+                </li>
+                
+            </ul>
         </nav>
     </div>
 </header>
 
+
+<script type="module">
+    let _languageSelector = null;
+
+    function isLanguageMatch(langA, langB, lax = false) {
+        const langALower = (langA ?? "").toLowerCase();
+        const langBLower = (langB ?? "").toLowerCase();
+        if (langALower === langBLower) {
+            return true;
+        }
+        if (!lax) {
+            return false;
+        }
+        return langALower.slice(0, 2) === langBLower.slice(0, 2);
+    }
+
+    function redirectTo(path) {
+        if (path == null) {
+            return;
+        }
+        window.location.href = path;
+    }
+
+    function getLanguageSelector() {
+        if (_languageSelector != null) {
+            return _languageSelector;
+        }
+        _languageSelector = document.querySelector(".language-selector");
+        if (_languageSelector == null) {
+            throw new Error("Could not find `.language-selector`");
+        }
+        return _languageSelector;
+    }
+
+    function setPreferredLanguage(lang) {
+        window.localStorage.setItem("preferred_language", lang);
+    }
+
+    function getPreferredLanguage() {
+        return window.localStorage.getItem("preferred_language");
+    }
+
+    function setLanguagePreference(path, lang) {
+        setPreferredLanguage(lang);
+        redirectTo(path);
+    }
+
+    function getLanguagePath(lang) {
+        const languageSelector = getLanguageSelector();
+        const languageAnchors = Array.from(
+            languageSelector.querySelectorAll(".language-option > a[data-lang]"),
+        );
+        for (const languageAnchor of languageAnchors) {
+            if (isLanguageMatch(lang, languageAnchor.dataset.lang)) {
+                return languageAnchor.dataset.langPath;
+            }
+        }
+        return null;
+    }
+
+    function getBrowserPreferredLanguage() {
+        const languageSelector = getLanguageSelector();
+        const languageAnchors = Array.from(
+            languageSelector.querySelectorAll(".language-option > a[data-lang]"),
+        );
+        const languages = languageAnchors.map(
+            (languageAnchor) => languageAnchor.dataset.lang,
+        );
+
+        const matchLanguage = (currentLanguage) => {
+            for (const language of languages) {
+                if (isLanguageMatch(navigator.language, language)) {
+                    return language;
+                }
+            }
+            for (const language of languages) {
+                if (isLanguageMatch(navigator.language, language, true)) {
+                    return language;
+                }
+            }
+            return null;
+        };
+
+        let matchedLanguage = null;
+
+        if (navigator.language != null) {
+            matchedLanguage = matchLanguage(navigator.language);
+            if (matchedLanguage != null) {
+                return matchedLanguage;
+            }
+        }
+
+        for (const navigatorLanguage of navigator.languages ?? []) {
+            matchedLanguage = matchLanguage(navigatorLanguage);
+            if (matchedLanguage != null) {
+                return matchedLanguage;
+            }
+        }
+
+        return matchedLanguage;
+    }
+
+    function main() {
+        document.addEventListener("click", function (event) {
+            const languageSelector = getLanguageSelector();
+            // Check if the click is outside the language selector
+            if (!languageSelector.contains(event.target)) {
+                languageSelector.classList.remove("open");
+            }
+        });
+
+        const currentLanguage = document.documentElement.lang;
+        const preferredLanguage = getPreferredLanguage();
+        if (preferredLanguage == null) {
+            const browserPreferredLanguage = getBrowserPreferredLanguage();
+            if (browserPreferredLanguage == null) {
+                setPreferredLanguage("en");
+                const languagePath = getLanguagePath("en");
+                if (!window.location.href.startsWith(languagePath)) {
+                    redirectTo(languagePath);
+                }
+            } else {
+                setPreferredLanguage(browserPreferredLanguage);
+                const languagePath = getLanguagePath(browserPreferredLanguage);
+                if (!window.location.href.startsWith(languagePath)) {
+                    redirectTo(languagePath);
+                }
+            }
+        } else if (preferredLanguage !== currentLanguage && currentLanguage === "en") {
+            const languagePath = getLanguagePath(preferredLanguage);
+            if (!window.location.href.startsWith(languagePath)) {
+                redirectTo(languagePath);
+            }
+        } else {
+            setPreferredLanguage(currentLanguage);
+        }
+
+        // Language select event listener.
+        window.onSetLanguagePreference = (event, element) => {
+            event.preventDefault();
+            const path = element.dataset.langPath;
+            const lang = element.dataset.lang;
+            setLanguagePreference(path, lang);
+        };
+    }
+
+    main();
+</script>
+
+
+<script>
+    // Open dropdown on hover (desktop) or tap (touch devices)
+    document.addEventListener('DOMContentLoaded', function () {
+        // Detect if device has touch capability
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        // Find all dropdown triggers
+        const dropdownTriggers = document.querySelectorAll('[data-dropdown]');
+
+        dropdownTriggers.forEach(trigger => {
+            const dropdownId = trigger.getAttribute('data-dropdown');
+            const dropdownMenu = document.getElementById(dropdownId);
+
+            if (dropdownMenu) {
+                let hideTimeout;
+
+                function showDropdown() {
+                    // Don't show dropdown on small screens (width < 1200px)
+                    if (window.innerWidth < 1200) return;
+                    clearTimeout(hideTimeout);
+                    const rect = trigger.getBoundingClientRect();
+                    dropdownMenu.style.top = (rect.bottom) + 'px';
+                    dropdownMenu.style.left = (rect.left) + 'px';
+                    dropdownMenu.style.display = 'block';
+                    trigger.classList.add('dropdown-open');
+                }
+
+                // Hide dropdown after a delay
+                function hideDropdown() {
+                    hideTimeout = setTimeout(() => {
+                        dropdownMenu.style.display = 'none';
+                        trigger.classList.remove('dropdown-open');
+                    }, 100);
+                }
+
+                // Toggle dropdown on high-resolution tablets
+                function toggleDropdown(event) {
+                    if (window.innerWidth < 1200) return;
+                    event.preventDefault();
+                    const isVisible = dropdownMenu.style.display === 'block';
+                    if (isVisible) {
+                        dropdownMenu.style.display = 'none';
+                        trigger.classList.remove('dropdown-open');
+                    } else {
+                        showDropdown();
+                    }
+                }
+
+                if (isTouchDevice) {
+                    // Touch device: use click/tap to toggle dropdown
+                    trigger.addEventListener('click', toggleDropdown);
+                } else {
+                    // Desktop: use hover
+                    trigger.addEventListener('mouseenter', showDropdown);
+                    trigger.addEventListener('mouseleave', hideDropdown);
+
+                    // Keep dropdown visible when hovering over it
+                    dropdownMenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+                    dropdownMenu.addEventListener('mouseleave', hideDropdown);
+                }
+            }
+        });
+
+        // Close dropdown when clicking outside (for touch devices)
+        if (isTouchDevice) {
+            document.addEventListener('click', function (event) {
+                dropdownTriggers.forEach(trigger => {
+                    const dropdownId = trigger.getAttribute('data-dropdown');
+                    const dropdownMenu = document.getElementById(dropdownId);
+
+                    if (dropdownMenu &&
+                        !trigger.contains(event.target) &&
+                        !dropdownMenu.contains(event.target)) {
+                        dropdownMenu.style.display = 'none';
+                        trigger.classList.remove('dropdown-open');
+                    }
+                });
+            });
+        }
+    });
+</script>
+
 <main>
+</body>
+
+</html>
